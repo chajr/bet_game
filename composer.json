@@ -1,0 +1,14 @@
+{
+    "name": "chajr/bonus",
+    "description": "Bonus system",
+    "authors": [
+        {
+            "name": "Michał Adamiak",
+            "email": "chajr@bluetree.pl"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "laravel/framework": "4.2.*"
+    }
+}
