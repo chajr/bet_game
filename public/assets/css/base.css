@@ -1,0 +1,30 @@
+body{
+    padding:20px;
+}
+#login_form {
+    margin: 25px auto;
+    width: 350px;
+}
+.panel-default {
+    border-color: #555555;
+}
+.panel-default > .panel-heading {
+    background-image: none;
+}
+#login_form{
+    margin: 25px auto;
+    width:350px;
+}
+#login_form form, #add_form form{
+    padding: 10px;
+}
+.message{
+    margin: 25px auto;
+    width: 70%;
+}
+.navbar-default{
+    background-image: none;
+    border: 1px solid #464646;
+    background-color: #212121;
+    box-shadow: none;
+}
