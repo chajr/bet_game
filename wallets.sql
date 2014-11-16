@@ -15,5 +15,4 @@ CREATE TABLE `wallets` (
 INSERT INTO `wallets`
 (`wallet_id`, `user_id`, `currency`, `init_val`, `value`, `status`, `origin`, `bonus_id`, `updated_at`, `created_at`)
 VALUES
-(NULL, '1', '1', '0', '0', '1', '1', NULL, CURRENT_TIMESTAMP, '0000-00-00 00:00:00.000000'),
-(NULL, '1', '0', '0', '0', '1', '0', '1', CURRENT_TIMESTAMP, '0000-00-00 00:00:00.000000');
+(NULL, '1', '1', '0', '0', '1', '1', NULL, CURRENT_TIMESTAMP, '0000-00-00 00:00:00.000000');

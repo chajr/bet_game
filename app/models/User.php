@@ -53,25 +53,73 @@ class User extends Eloquent implements UserInterface, RemindableInterface
             return '';
         }
 
-        $wallet = Wallet::where('user_id', '=', $this->user_id)
-            ->where('bonus_id', '=', 1)
-            ->where('origin', '=', 0)
-            ->where('status', '=', 1)
-            ->get();
-
-        if ($wallet->isEmpty()) {
-            return '';
-        }
-
         $message = 'Congratulations! This is you '
             . $this->log
             . ' login, so you been reward by '
             . $bonus->first()->value
             . Bonus::getBonusType($bonus->first()->value_type)
             . ' bonus';
-        $wallet->first()->value = $wallet->first()->value + $bonus->first()->value;
-        $wallet->first()->save();
+
+        /** @var Wallet $wallet */
+        $wallet             = new Wallet();
+        $wallet->user_id    = $this->user_id;
+        $wallet->currency   = 0;
+        $wallet->status     = 1;
+        $wallet->origin     = 0;
+        $wallet->bonus_id   = $bonus->first()->bonus_id;
+        $wallet->value      = $bonus->first()->value;
+        $wallet->save();
 
         return $message;
+    }
+
+    /**
+     * get user wallets information
+     * 
+     * @return array
+     */
+    public function getUserWallets()
+    {
+        $walletData = [
+            'total'     => 0,
+            'real'      => 0,
+        ];
+
+        /** @var Wallet $wallets */
+        $wallets = Wallet::where('user_id', '=', $this->user_id)
+            ->where('status', '=', 1)
+            ->get();
+
+        foreach ($wallets as $wallet) {
+            if ($wallet->origin === '1') {
+                $walletData['total']    += $wallet->value;
+                $walletData['real']     += $wallet->value;
+            }
+
+            if ($wallet->origin === '0') {
+                $walletData['total']    += $wallet->value;
+                $walletData['bonus'][]  = [
+                    'value'     => $wallet->value,
+                    'name'      => $this->_getBonusName($wallet->bonus_id)
+                ];
+            }
+        }
+
+        Debugbar::info($wallets->toArray());
+        Debugbar::info($walletData);
+        return $walletData;
+    }
+
+    /**
+     * get name for given bonus id
+     * 
+     * @param int $bonusId
+     * @return mixed
+     */
+    protected function _getBonusName($bonusId)
+    {
+        /** @var Bonus $bonus */
+        $bonus = Bonus::find($bonusId);
+        return $bonus->name;
     }
 }

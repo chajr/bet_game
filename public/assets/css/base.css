@@ -28,3 +28,12 @@ body{
     background-color: #212121;
     box-shadow: none;
 }
+.center-block{
+    float: none!important;
+}
+.row{
+    margin-bottom: 10px;
+}
+.display_none{
+    display: none;
+}

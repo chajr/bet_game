@@ -75,6 +75,7 @@ class BaseController extends Controller
     public function userAccountAction()
     {
         if (Auth::check()) {
+            /** @var User $user */
             $user = User::find(Auth::id());
             Debugbar::info([
                 'user_id'       => $user->user_id,
@@ -85,6 +86,7 @@ class BaseController extends Controller
 
             $variables          = $this->_getMessages();
             $variables['user']  = $user->name . ' ' . $user->last_name;
+            $variables          = array_merge($user->getUserWallets(), $variables);
 
             return View::make('account', $variables);
         }
@@ -104,6 +106,44 @@ class BaseController extends Controller
         Auth::logout();
 
         return Redirect::to('/');
+    }
+
+    /**
+     * allow to add user real money by ajax
+     * 
+     * @return string
+     */
+    public function makeDepositAction()
+    {
+        $response = [
+            'status'    => 'fail',
+            'message'   => ''
+        ];
+
+        if (!Input::has('value')) {
+            $response['message'] = 'You must give some value';
+        }
+
+        if (!preg_match('#^([\d]+)([,.][\d]+)?$#', Input::get('value'))) {
+            $response['message'] = 'Given value is incorrect (only numbers separated by , or .)';
+        }
+
+        if (Auth::check()) {
+            /** @var Wallet $wallet */
+            $wallet = Wallet::where('user_id', '=', Auth::id())
+                ->where('origin', '=', 1)
+                ->get();
+
+            $wallet->first()->value = $wallet->first()->value + Input::get('value');
+            $wallet->first()->save();
+
+            $response['message'] = 'Amount has ben added';
+            $response['status']  = 'success';
+        } else {
+            $response['message'] = 'You are not logged in';
+        }
+
+        return json_encode($response);
     }
 
     /**

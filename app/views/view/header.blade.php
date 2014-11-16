@@ -15,3 +15,6 @@
 @if (isset($successMessage) && $successMessage !== '')
 <div class="alert alert-success message" role="alert" data-auto-close="5000">{{{$successMessage}}}</div>
 @endif
+
+<div class="alert alert-danger message display_none" role="alert"></div>
+<div class="alert alert-success message display_none" role="alert"></div>
