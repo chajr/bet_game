@@ -30,23 +30,7 @@ class BaseController extends Controller
      */
     public function loginAction()
     {
-        $errorMessage   = '';
-        $successMessage = '';
-
-        if (Session::has('errorMessage')) {
-            $errorMessage = Session::get('errorMessage');
-            Session::forget('errorMessage');
-        }
-
-        if (Session::has('successMessage')) {
-            $successMessage = Session::get('successMessage');
-            Session::forget('successMessage');
-        }
-
-        return View::make('login', [
-            'errorMessage'      => $errorMessage,
-            'successMessage'    => $successMessage,
-        ]);
+        return View::make('login', $this->_getMessages());
     }
 
     /**
@@ -69,8 +53,11 @@ class BaseController extends Controller
                 true
             )
         ) {
-            $user = User::find(Auth::id());
-            $user->log = $user->log +1;
+            /** @var User $user */
+            $user       = User::find(Auth::id());
+            $user->log  += 1;
+            $message    = $user->checkForLoginBonus();
+            Session::set('successMessage', $message);
             $user->save();
 
             return Redirect::to('/account');
@@ -96,7 +83,10 @@ class BaseController extends Controller
                 'log'           => $user->log,
             ]);
 
-            return View::make('account', ['user' => $user->name . ' ' . $user->last_name]);
+            $variables          = $this->_getMessages();
+            $variables['user']  = $user->name . ' ' . $user->last_name;
+
+            return View::make('account', $variables);
         }
 
         Session::set('errorMessage', 'You are not logged in');
@@ -114,5 +104,31 @@ class BaseController extends Controller
         Auth::logout();
 
         return Redirect::to('/');
+    }
+
+    /**
+     * return messages for user
+     * 
+     * @return array
+     */
+    protected function _getMessages()
+    {
+        $errorMessage   = '';
+        $successMessage = '';
+
+        if (Session::has('errorMessage')) {
+            $errorMessage = Session::get('errorMessage');
+            Session::forget('errorMessage');
+        }
+
+        if (Session::has('successMessage')) {
+            $successMessage = Session::get('successMessage');
+            Session::forget('successMessage');
+        }
+
+        return [
+            'errorMessage'      => $errorMessage,
+            'successMessage'    => $successMessage,
+        ];
     }
 }

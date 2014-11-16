@@ -45,23 +45,17 @@ return array(
     */
 
     'connections' => array(
-
-        'sqlite' => array(
-            'driver'   => 'sqlite',
-            'database' => __DIR__.'/../database/production.sqlite',
-            'prefix'   => '',
+        'mysql' => array(
+            'driver'    => 'mysql',
+            'host'      => 'sql.zmp.nazwa.pl',
+            'database'  => 'zmp_11',
+            'username'  => 'zmp_11',
+            'password'  => 'BONUS_system1',
+            'charset'   => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix'    => '',
+            'port'      => 3307
         ),
-
-//        'mysql' => array(
-//            'driver'    => 'mysql',
-//            'host'      => 'localhost',
-//            'database'  => 'forge',
-//            'username'  => 'forge',
-//            'password'  => '',
-//            'charset'   => 'utf8',
-//            'collation' => 'utf8_unicode_ci',
-//            'prefix'    => '',
-//        ),
     ),
 
     /*

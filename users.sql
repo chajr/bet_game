@@ -17,4 +17,4 @@ CREATE TABLE `users` (
 INSERT INTO `users`
 (`user_id`, `email`, `password`, `name`, `last_name`, `age`, `gender`, `remember_token`, `log`, `updated_at`, `created_at`)
 VALUES
-(1, 'user1@bluetree.pl', '$2y$10$1IxvACswioWe0TIWmqhTO.jpkPJGYmK/uoGBJvTGSXfgI7yLKi1J6', 'Jan', 'Kowalski', 22, '1', 'bQeaTlAx1pC4l49EXnn8herFeHxqLbgaohwmufRaPt4kquECCdaRg6w80V8X', 0, '0000-00-00 00:00:00', '2014-11-15 18:02:14');
+(1, 'user1@bluetree.pl', '$2y$10$1IxvACswioWe0TIWmqhTO.jpkPJGYmK/uoGBJvTGSXfgI7yLKi1J6', 'Jan', 'Kowalski', 22, '1', 'bQeaTlAx1pC4l49EXnn8herFeHxqLbgaohwmufRaPt4kquECCdaRg6w80V8X', 0, '0000-00-00 00:00:00', CURRENT_TIMESTAMP);
