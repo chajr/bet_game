@@ -37,3 +37,6 @@ body{
 .display_none{
     display: none;
 }
+.form-control[disabled="disabled"]{
+    color: #bbb;
+}

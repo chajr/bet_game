@@ -6,9 +6,9 @@
                 <div class="input-group-addon">$</div>
                 <input type="text" name="bet" class="form-control" id="bet" placeholder="Bet amount">
             </div>
-            <button type="submit" class="btn btn-primary">Spin!</button>
+            <button type="button" id="spin" class="btn btn-primary">Spin!</button>
             <div class="form-group input-group col-md-5 col-sm-12">
-                <input type="text" class="form-control" id="win" placeholder="Win amount" diasbled>
+                <input type="text" class="form-control" id="win" placeholder="Win amount" disabled="disabled"/>
             </div>
         </form>
     </div>

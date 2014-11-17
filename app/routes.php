@@ -10,3 +10,4 @@ Route::get('/account', 'BaseController@userAccountAction');
 Route::get('/logout', 'BaseController@logoutAction');
 Route::post('/authenticate', 'BaseController@authenticateAction');
 Route::post('/make_deposit', 'BaseController@makeDepositAction');
+Route::post('/make_bet', 'BaseController@makeBetAction');

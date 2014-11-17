@@ -7,8 +7,15 @@
  * @author      Michał Adamiak <michal.adamiak@spj.com.pl>
  */
 
+use Zend\Json\Json;
+
 class BaseController extends Controller
 {
+    /**
+     * common regular expression to validate money value
+     */
+    const MONEY_EXPRESSION = '#^([\d]+)([,.]{1}[\d]+)?$#';
+
     /**
      * check that user is logged in and redirect to correct page
      *
@@ -124,7 +131,7 @@ class BaseController extends Controller
             $response['message'] = 'You must give some value';
         }
 
-        if (!preg_match('#^([\d]+)([,.][\d]+)?$#', Input::get('value'))) {
+        if (!preg_match(self::MONEY_EXPRESSION, Input::get('value'))) {
             $response['message'] = 'Given value is incorrect (only numbers separated by , or .)';
         }
 
@@ -143,7 +150,9 @@ class BaseController extends Controller
             $response['message'] = 'You are not logged in';
         }
 
-        return json_encode($response);
+        $response = Response::make(Json::encode($response), 200);
+        $response->header('Content-Type', 'application/json');
+        return $response;
     }
 
     /**
@@ -170,5 +179,69 @@ class BaseController extends Controller
             'errorMessage'      => $errorMessage,
             'successMessage'    => $successMessage,
         ];
+    }
+
+    /**
+     * check that user win or loose and send message
+     * 
+     * @return string
+     */
+    public function makeBetAction()
+    {
+        $flag     = true;
+        $response = [
+            'status'    => 'fail',
+            'message'   => ''
+        ];
+
+        /** @var Wallet $userRealWallet */
+        $userRealWallet = Wallet::where('user_id', '=', Auth::id())
+            ->where('origin', '=', 1)
+            ->get()->first();
+
+        if ($userRealWallet->value <= 0) {
+            $response['message'] = 'Not enough funds to place a bet';
+            $flag                = false;
+        }
+        $availableFunds = DB::table('wallets')
+            ->where('user_id', '=', Auth::id())
+            ->where('status', '=', 1)
+            ->sum('value');
+        
+
+        if (Input::has('value')
+            && preg_match(self::MONEY_EXPRESSION, Input::get('value'))
+            && $flag
+        ) {
+            $response['status'] = 'success';
+
+            if ($this->_placeBet()) {
+                $response['message']            = 'win';
+                $response['data']['message']    = 'You win :)';
+                //winn wallet
+                
+                //calculate bonus wallet limit and place to real money
+            } else {
+                $response['message']            = 'loose';
+                $response['data']['message']    = 'You loose :(';
+            }
+
+        } else {
+            $response['message'] = 'You must give bet amount or value is incorrect (only numbers separated by , or .)';
+        }
+
+        $response = Response::make(Json::encode($response), 200);
+        $response->header('Content-Type', 'application/json');
+        return $response;
+    }
+
+    /**
+     * place bet (user loose or win money)
+     * 
+     * @return bool
+     */
+    protected function _placeBet()
+    {
+        return (bool)mt_rand(0, 1);
     }
 }
