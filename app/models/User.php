@@ -61,14 +61,54 @@ class User extends Eloquent implements UserInterface, RemindableInterface
             . ' bonus';
 
         /** @var Wallet $wallet */
-        $wallet             = new Wallet();
-        $wallet->user_id    = $this->user_id;
-        $wallet->currency   = 0;
-        $wallet->status     = 1;
-        $wallet->origin     = 0;
-        $wallet->bonus_id   = $bonus->first()->bonus_id;
-        $wallet->value      = $bonus->first()->value;
-        $wallet->save();
+        $wallet  = new Wallet();
+        $wallet->createWallet([
+            'user_id'       => $this->user_id,
+            'currency'      => 0,
+            'status'        => 1,
+            'origin'        => 0,
+            'bonus_id'      => $bonus->first()->bonus_id,
+            'value'         => $bonus->first()->value,
+        ]);
+
+        return $message;
+    }
+
+    /**
+     * check that user should get login bonus and apply it
+     * 
+     * @param int $deposit
+     * @return string
+     */
+    public function checkForDepositBonus($deposit)
+    {
+        /** @var Bonus $bonus */
+        $bonus = Bonus::where('trigger', '=', 'deposite')
+            ->where('multiplier', '=', $deposit)
+            ->get();
+
+        if ($bonus->isEmpty()) {
+            return '';
+        }
+
+        $depositValue   = ($bonus->first()->value / 100) * $deposit;
+        $message        = 'Congratulations! You deposit '
+            . $deposit
+            . '$, so you been reward by '
+            . $bonus->first()->value
+            . Bonus::getBonusType($bonus->first()->value_type)
+            . ' bonus';
+
+        /** @var Wallet $wallet */
+        $wallet = new Wallet();
+        $wallet->createWallet([
+            'user_id'       => $this->user_id,
+            'currency'      => 0,
+            'status'        => 1,
+            'origin'        => 0,
+            'bonus_id'      => $bonus->first()->bonus_id,
+            'value'         => $depositValue,
+        ]);
 
         return $message;
     }

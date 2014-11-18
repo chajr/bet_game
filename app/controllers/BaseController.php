@@ -37,7 +37,7 @@ class BaseController extends Controller
      */
     public function loginAction()
     {
-        return View::make('login', $this->_getMessages());
+        return View::make('login', $this->getMessages());
     }
 
     /**
@@ -91,7 +91,7 @@ class BaseController extends Controller
                 'log'           => $user->log,
             ]);
 
-            $variables          = $this->_getMessages();
+            $variables          = $this->getMessages();
             $variables['user']  = $user->name . ' ' . $user->last_name;
             $variables          = array_merge($user->getUserWallets(), $variables);
 
@@ -144,14 +144,17 @@ class BaseController extends Controller
             $wallet->first()->value = $wallet->first()->value + Input::get('value');
             $wallet->first()->save();
 
-            $response['message'] = 'Amount has ben added';
+            /** @var User $user */
+            $user       = User::find(Auth::id());
+            $message    = $user->checkForDepositBonus(Input::get('value'));
+
+            $response['message'] = 'Amount has ben added. ' . $message;
             $response['status']  = 'success';
         } else {
             $response['message'] = 'You are not logged in';
         }
 
         $response = Response::make(Json::encode($response), 200);
-        $response->header('Content-Type', 'application/json');
         return $response;
     }
 
@@ -160,7 +163,7 @@ class BaseController extends Controller
      * 
      * @return array
      */
-    protected function _getMessages()
+    protected function getMessages()
     {
         $errorMessage   = '';
         $successMessage = '';
@@ -203,24 +206,46 @@ class BaseController extends Controller
             $response['message'] = 'Not enough funds to place a bet';
             $flag                = false;
         }
+
         $availableFunds = DB::table('wallets')
             ->where('user_id', '=', Auth::id())
             ->where('status', '=', 1)
             ->sum('value');
-        
 
-        if (Input::has('value')
-            && preg_match(self::MONEY_EXPRESSION, Input::get('value'))
-            && $flag
-        ) {
+        if ($availableFunds < Input::get('value')) {
+            $response['message'] = 'Not enough funds to place that bet';
+            $flag                = false;
+        }
+
+        if ($flag) {
+            $response = $this->makeBet($response);
+        }
+
+        $jsonResponse = Response::make(Json::encode($response), 200);
+        return $jsonResponse;
+    }
+
+    /**
+     * place a bet for user
+     * 
+     * @param $response
+     * @return mixed
+     */
+    protected function makeBet($response)
+    {
+        if (Input::has('value') && preg_match(self::MONEY_EXPRESSION, Input::get('value'))) {
             $response['status'] = 'success';
+            $value              = Input::get('value');
 
-            if ($this->_placeBet()) {
+            if ($this->winLose()) {
                 $response['message']            = 'win';
                 $response['data']['message']    = 'You win :)';
-                //winn wallet
-                
-                //calculate bonus wallet limit and place to real money
+
+                //calculate win amount
+//                /** @var Wallet $wallet */
+//                $wallet = new Wallet();
+//                $wallet->saveWin(0,  Auth::id());
+
             } else {
                 $response['message']            = 'loose';
                 $response['data']['message']    = 'You loose :(';
@@ -230,17 +255,15 @@ class BaseController extends Controller
             $response['message'] = 'You must give bet amount or value is incorrect (only numbers separated by , or .)';
         }
 
-        $response = Response::make(Json::encode($response), 200);
-        $response->header('Content-Type', 'application/json');
         return $response;
     }
 
     /**
-     * place bet (user loose or win money)
+     * check that user should win or loose bet
      * 
      * @return bool
      */
-    protected function _placeBet()
+    protected function winLose()
     {
         return (bool)mt_rand(0, 1);
     }

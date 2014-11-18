@@ -17,4 +17,6 @@ VALUES
 (NULL, 'Login bonus', 'login', '10', 'fixed', '0', '1', CURRENT_TIMESTAMP, '0000-00-00 00:00:00.000000'),
 (NULL, 'Second login bonus', 'login', '5', 'fixed', '5', '1', CURRENT_TIMESTAMP, '0000-00-00 00:00:00.000000'),
 (NULL, '10 login bonus', 'login', '10', 'fixed', '10', '1', CURRENT_TIMESTAMP, '0000-00-00 00:00:00.000000'),
-(NULL, '20 login bonus', 'login', '10', 'fixed', '20', '1', CURRENT_TIMESTAMP, '0000-00-00 00:00:00.000000');
+(NULL, '20 login bonus', 'login', '10', 'fixed', '20', '1', CURRENT_TIMESTAMP, '0000-00-00 00:00:00.000000'),
+(NULL, '50$ deposit bonus', 'deposite', '5', 'percent', '0', '1', CURRENT_TIMESTAMP, '0000-00-00 00:00:00.000000'),
+(NULL, '100$ deposit bonus', 'deposite', '10', 'percent', '0', '1', CURRENT_TIMESTAMP, '0000-00-00 00:00:00.000000');
