@@ -69,7 +69,7 @@ class BaseController extends Controller
 
             return Redirect::to('/account');
         } else {
-            Session::set('errorMessage', 'Login or password is incorrect');
+            Session::set('errorMessage', 'Login or password are incorrect');
             return Redirect::to('/login');
         }
     }
@@ -241,10 +241,9 @@ class BaseController extends Controller
                 $response['message']            = 'win';
                 $response['data']['message']    = 'You win :)';
 
-                //calculate win amount
-//                /** @var Wallet $wallet */
-//                $wallet = new Wallet();
-//                $wallet->saveWin(0,  Auth::id());
+                /** @var Wallet $wallet */
+                $wallet = new Wallet();
+                $wallet->saveWin($value,  Auth::id());
 
             } else {
                 $response['message']            = 'loose';

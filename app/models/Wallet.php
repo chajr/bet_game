@@ -66,6 +66,12 @@ class Wallet extends Eloquent
      */
     protected function calculateRealOrBonusMoney($win, $winWallet)
     {
+        $bonusMoney = $availableFunds = DB::table('wallets')
+            ->where('user_id', '=', Auth::id())
+            ->where('status', '=', 1)
+            ->where('origin', '=', 0)
+            ->sum('value');
+
         $sum    = $win + $winWallet;
         $return = [
             'real'  => 0,

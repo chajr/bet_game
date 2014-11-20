@@ -91,13 +91,18 @@ class User extends Eloquent implements UserInterface, RemindableInterface
             return '';
         }
 
-        $depositValue   = ($bonus->first()->value / 100) * $deposit;
+        $bonusValue     = $bonus->first()->value;
+        $bonusType      = Bonus::getBonusType($bonus->first()->value_type);
+        $depositValue   = ($bonusValue / 100) * $deposit;
         $message        = 'Congratulations! You deposit '
             . $deposit
             . '$, so you been reward by '
-            . $bonus->first()->value
-            . Bonus::getBonusType($bonus->first()->value_type)
-            . ' bonus';
+            . $bonusValue
+            . $bonusType
+            . ' bonus ('
+            . $bonusValue
+            . $bonusType
+            . ')';
 
         /** @var Wallet $wallet */
         $wallet = new Wallet();
